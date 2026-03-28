@@ -1,0 +1,385 @@
+.root {
+  --tpl-primary: #6ee7ff;
+  --tpl-secondary: #ff8a5b;
+  position: relative;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(110, 231, 255, 0.16), transparent 24%),
+    radial-gradient(circle at 82% 10%, rgba(255, 138, 91, 0.14), transparent 18%),
+    linear-gradient(180deg, #05070b 0%, #090d14 48%, #0c101a 100%);
+  color: #eef5ff;
+}
+
+.gridBackdrop {
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(110, 231, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110, 231, 255, 0.08) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 92%);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  width: min(1180px, calc(100% - 32px));
+  padding: 22px 0 64px;
+}
+
+.nav {
+  position: sticky;
+  top: 16px;
+  z-index: 12;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid rgba(110, 231, 255, 0.18);
+  background: rgba(7, 10, 17, 0.82);
+  padding: 14px 18px;
+  backdrop-filter: blur(14px);
+}
+
+.frameGlow .nav,
+.frameGlow .heroPanel,
+.frameGlow .metricPanel,
+.frameGlow .skillPanel,
+.frameGlow .projectPanel,
+.frameGlow .contactPanel {
+  box-shadow:
+    0 0 0 1px rgba(110, 231, 255, 0.05) inset,
+    0 0 30px rgba(110, 231, 255, 0.08);
+}
+
+.brand {
+  display: grid;
+  gap: 3px;
+}
+
+.brandLabel,
+.kicker,
+.panelLabel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--tpl-primary) 78%, white);
+}
+
+.brandValue {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.navLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.navLink {
+  border: 1px solid transparent;
+  padding: 10px 12px;
+  color: rgba(238, 245, 255, 0.72);
+  font-size: 14px;
+  transition: border-color 180ms ease, color 180ms ease, background-color 180ms ease;
+}
+
+.navLink:hover,
+.navLinkActive {
+  border-color: rgba(110, 231, 255, 0.22);
+  background: rgba(110, 231, 255, 0.06);
+  color: #fff;
+}
+
+.hero {
+  display: grid;
+  gap: 22px;
+  padding: 62px 0 20px;
+}
+
+.heroLead {
+  max-width: 700px;
+}
+
+.heroGreeting {
+  margin-top: 18px;
+  color: color-mix(in srgb, var(--tpl-primary) 74%, white);
+}
+
+.heroTitle {
+  margin-top: 10px;
+  font-size: clamp(3.2rem, 8vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+}
+
+.heroSubtitle {
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: rgba(238, 245, 255, 0.76);
+}
+
+.heroDescription {
+  max-width: 640px;
+  margin-top: 20px;
+  color: rgba(238, 245, 255, 0.72);
+  line-height: 1.85;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.primaryAction,
+.secondaryAction,
+.projectLinks a,
+.footer a {
+  transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  border: 1px solid rgba(110, 231, 255, 0.24);
+  padding: 0 18px;
+  font-weight: 600;
+}
+
+.primaryAction {
+  background: linear-gradient(135deg, var(--tpl-primary), var(--tpl-secondary));
+  color: #05070b;
+}
+
+.secondaryAction {
+  background: rgba(110, 231, 255, 0.05);
+  color: #eef5ff;
+}
+
+.primaryAction:hover,
+.secondaryAction:hover,
+.projectLinks a:hover,
+.footer a:hover {
+  transform: translateY(-1px);
+}
+
+.heroAside {
+  display: grid;
+  gap: 16px;
+}
+
+.heroPanel,
+.metricPanel,
+.skillPanel,
+.projectPanel,
+.contactPanel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(110, 231, 255, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 28%),
+    rgba(7, 10, 17, 0.8);
+  padding: 20px;
+}
+
+.heroPanel::after,
+.metricPanel::after,
+.skillPanel::after,
+.projectPanel::after,
+.contactPanel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(110, 231, 255, 0.12), transparent 55%);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+.heroPanel:hover::after,
+.metricPanel:hover::after,
+.skillPanel:hover::after,
+.projectPanel:hover::after,
+.contactPanel:hover::after {
+  opacity: 1;
+}
+
+.heroAvatar {
+  overflow: hidden;
+  border: 1px solid rgba(110, 231, 255, 0.18);
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.heroAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.panelBody {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.panelBody p,
+.projectContent p,
+.contactPanel p {
+  color: rgba(238, 245, 255, 0.68);
+  line-height: 1.75;
+}
+
+.metricGrid {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.metricGrid div {
+  border: 1px solid rgba(110, 231, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px;
+}
+
+.metricGrid span {
+  display: block;
+  color: rgba(238, 245, 255, 0.5);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.metricGrid strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+}
+
+.section {
+  padding-top: 26px;
+}
+
+.sectionHeader {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.sectionTitle {
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  letter-spacing: -0.04em;
+}
+
+.skillGrid,
+.contactBoard {
+  display: grid;
+  gap: 16px;
+}
+
+.skillPanel h3,
+.projectContent h3,
+.contactPanel strong {
+  margin-top: 14px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.skillList,
+.projectStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.skillChip,
+.projectStack span {
+  border: 1px solid rgba(110, 231, 255, 0.18);
+  background: rgba(110, 231, 255, 0.06);
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgba(238, 245, 255, 0.8);
+}
+
+.projectList {
+  display: grid;
+  gap: 16px;
+}
+
+.projectMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.projectLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.projectLinks a,
+.footer a {
+  color: color-mix(in srgb, var(--tpl-primary) 78%, white);
+}
+
+.projectContent {
+  margin-top: 14px;
+}
+
+.contactPanel {
+  display: grid;
+  gap: 10px;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 28px 0 10px;
+  color: rgba(238, 245, 255, 0.58);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (min-width: 980px) {
+  .hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  }
+
+  .skillGrid,
+  .contactBoard {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metricGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

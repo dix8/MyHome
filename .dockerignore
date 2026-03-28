@@ -1,0 +1,13 @@
+node_modules
+.next
+tsconfig.tsbuildinfo
+npm-debug.log*
+dev-server.out.log
+dev-server.err.log
+.env
+.env.docker
+.env.local
+.env.production
+.env.*.local
+.tmp
+deploy/baota

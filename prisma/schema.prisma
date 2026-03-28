@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MediaSourceType {
+  none
+  local
+  external
+}
+
+enum ContactIconType {
+  builtin
+  image
+}
+
+enum ProjectVisualType {
+  icon
+  cover
+}
+
+enum PublishActionType {
+  publish
+  rollback
+}
+
+enum HomeSectionKey {
+  hero
+  skills
+  projects
+  contact
+  footer
+}
+
+model User {
+  id               String            @id @default(uuid()) @db.Uuid
+  email            String            @unique @db.VarChar(191)
+  passwordHash     String            @map("password_hash") @db.Text
+  displayName      String            @map("display_name") @db.VarChar(80)
+  isActive         Boolean           @default(true) @map("is_active")
+  lastLoginAt      DateTime?         @map("last_login_at") @db.Timestamptz(6)
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  mediaAssets      MediaAsset[]
+  publishSnapshots PublishSnapshot[] @relation("PublishSnapshotPublishedBy")
+  activityLogs     ActivityLog[]
+
+  @@map("users")
+}
+
+model SiteSettings {
+  id                   String      @id @default(uuid()) @db.Uuid
+  siteName             String      @map("site_name") @db.VarChar(100)
+  siteSubtitle         String?     @map("site_subtitle") @db.VarChar(255)
+  seoTitle             String?     @map("seo_title") @db.VarChar(120)
+  seoDescription       String?     @map("seo_description") @db.VarChar(255)
+  seoKeywords          String[]    @default([]) @map("seo_keywords")
+  footerText           String?     @map("footer_text") @db.VarChar(255)
+  icpText              String?     @map("icp_text") @db.VarChar(100)
+  icpUrl               String?     @map("icp_url") @db.VarChar(255)
+  faviconSourceType    MediaSourceType @default(none) @map("favicon_source_type")
+  faviconMediaAssetId  String?     @map("favicon_media_asset_id") @db.Uuid
+  faviconExternalUrl   String?     @map("favicon_external_url") @db.Text
+  createdAt            DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  faviconMediaAsset    MediaAsset? @relation("SiteSettingsFavicon", fields: [faviconMediaAssetId], references: [id])
+
+  @@map("site_settings")
+}
+
+model HeroProfile {
+  id                   String          @id @default(uuid()) @db.Uuid
+  greeting             String?         @db.VarChar(50)
+  name                 String          @db.VarChar(80)
+  typingTitles         Json            @default("[]") @map("typing_titles")
+  description          String?         @db.Text
+  avatarSourceType     MediaSourceType @default(none) @map("avatar_source_type")
+  avatarMediaAssetId   String?         @map("avatar_media_asset_id") @db.Uuid
+  avatarExternalUrl    String?         @map("avatar_external_url") @db.Text
+  primaryButtonLabel   String?         @map("primary_button_label") @db.VarChar(50)
+  primaryButtonHref    String?         @map("primary_button_href") @db.VarChar(255)
+  secondaryButtonLabel String?         @map("secondary_button_label") @db.VarChar(50)
+  secondaryButtonHref  String?         @map("secondary_button_href") @db.VarChar(255)
+  createdAt            DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  avatarMediaAsset     MediaAsset?     @relation("HeroProfileAvatar", fields: [avatarMediaAssetId], references: [id])
+
+  @@map("hero_profiles")
+}
+
+model HomeSection {
+  id            String         @id @default(uuid()) @db.Uuid
+  sectionKey    HomeSectionKey @unique @map("section_key")
+  isEnabled     Boolean        @default(true) @map("is_enabled")
+  sortOrder     Int            @default(0) @map("sort_order")
+  sectionConfig Json           @default("{}") @map("section_config")
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("home_sections")
+}
+
+model NavigationItem {
+  id            String   @id @default(uuid()) @db.Uuid
+  label         String   @db.VarChar(50)
+  href          String   @db.VarChar(255)
+  openInNewTab  Boolean  @default(false) @map("open_in_new_tab")
+  sortOrder     Int      @default(0) @map("sort_order")
+  isEnabled     Boolean  @default(true) @map("is_enabled")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([sortOrder])
+  @@map("navigation_items")
+}
+
+model SkillGroup {
+  id         String      @id @default(uuid()) @db.Uuid
+  title      String      @db.VarChar(80)
+  subtitle   String?     @db.VarChar(120)
+  sortOrder  Int         @default(0) @map("sort_order")
+  isEnabled  Boolean     @default(true) @map("is_enabled")
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  skillItems SkillItem[]
+
+  @@index([sortOrder])
+  @@map("skill_groups")
+}
+
+model SkillItem {
+  id           String     @id @default(uuid()) @db.Uuid
+  skillGroupId String     @map("skill_group_id") @db.Uuid
+  name         String     @db.VarChar(80)
+  level        Int?       @db.SmallInt
+  sortOrder    Int        @default(0) @map("sort_order")
+  isEnabled    Boolean    @default(true) @map("is_enabled")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+  skillGroup   SkillGroup @relation(fields: [skillGroupId], references: [id], onDelete: Cascade)
+
+  @@index([skillGroupId, sortOrder])
+  @@map("skill_items")
+}
+
+model Project {
+  id                 String          @id @default(uuid()) @db.Uuid
+  title              String          @db.VarChar(120)
+  description        String          @db.Text
+  visualType         ProjectVisualType @default(icon) @map("visual_type")
+  iconName           String?         @map("icon_name") @db.VarChar(80)
+  coverSourceType    MediaSourceType @default(none) @map("cover_source_type")
+  coverMediaAssetId  String?         @map("cover_media_asset_id") @db.Uuid
+  coverExternalUrl   String?         @map("cover_external_url") @db.Text
+  repoUrl            String?         @map("repo_url") @db.VarChar(255)
+  previewUrl         String?         @map("preview_url") @db.VarChar(255)
+  techStack          String[]        @default([]) @map("tech_stack")
+  isFeatured         Boolean         @default(true) @map("is_featured")
+  sortOrder          Int             @default(0) @map("sort_order")
+  isEnabled          Boolean         @default(true) @map("is_enabled")
+  createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  coverMediaAsset    MediaAsset?     @relation("ProjectCover", fields: [coverMediaAssetId], references: [id])
+
+  @@index([sortOrder, isEnabled])
+  @@map("projects")
+}
+
+model ContactItem {
+  id              String          @id @default(uuid()) @db.Uuid
+  type            String          @db.VarChar(50)
+  label           String          @db.VarChar(50)
+  value           String          @db.VarChar(255)
+  href            String?         @db.VarChar(255)
+  iconType        ContactIconType @default(builtin) @map("icon_type")
+  iconName        String?         @map("icon_name") @db.VarChar(80)
+  iconSourceType  MediaSourceType @default(none) @map("icon_source_type")
+  iconMediaAssetId String?        @map("icon_media_asset_id") @db.Uuid
+  iconExternalUrl String?         @map("icon_external_url") @db.Text
+  openInNewTab    Boolean         @default(false) @map("open_in_new_tab")
+  sortOrder       Int             @default(0) @map("sort_order")
+  isEnabled       Boolean         @default(true) @map("is_enabled")
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  iconMediaAsset  MediaAsset?     @relation("ContactIcon", fields: [iconMediaAssetId], references: [id])
+
+  @@index([sortOrder, isEnabled])
+  @@map("contact_items")
+}
+
+model MediaAsset {
+  id                  String         @id @default(uuid()) @db.Uuid
+  kind                String         @default("image") @db.VarChar(20)
+  originalName        String         @map("original_name") @db.VarChar(255)
+  storedName          String         @map("stored_name") @db.VarChar(255)
+  storagePath         String         @unique @map("storage_path") @db.VarChar(500)
+  publicUrl           String         @unique @map("public_url") @db.VarChar(500)
+  mimeType            String         @map("mime_type") @db.VarChar(100)
+  extension           String?        @db.VarChar(20)
+  sizeBytes           BigInt         @map("size_bytes")
+  width               Int?
+  height              Int?
+  altText             String?        @map("alt_text") @db.VarChar(255)
+  uploadedByUserId    String?        @map("uploaded_by_user_id") @db.Uuid
+  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt           DateTime?      @map("deleted_at") @db.Timestamptz(6)
+  uploadedByUser      User?          @relation(fields: [uploadedByUserId], references: [id])
+  faviconForSettings  SiteSettings[] @relation("SiteSettingsFavicon")
+  avatarForHeroes     HeroProfile[]  @relation("HeroProfileAvatar")
+  coverForProjects    Project[]      @relation("ProjectCover")
+  iconForContacts     ContactItem[]  @relation("ContactIcon")
+
+  @@map("media_assets")
+}
+
+model SiteThemeState {
+  id                  String           @id @default(uuid()) @db.Uuid
+  templateId          String           @map("template_id") @db.VarChar(80)
+  templateConfig      Json             @default("{}") @map("template_config")
+  publishedSnapshotId String?          @map("published_snapshot_id") @db.Uuid
+  createdAt           DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  publishedSnapshot   PublishSnapshot? @relation("CurrentPublishedSnapshot", fields: [publishedSnapshotId], references: [id])
+
+  @@map("site_theme_state")
+}
+
+model PublishSnapshot {
+  id                String            @id @default(uuid()) @db.Uuid
+  snapshotNumber    Int               @unique @map("snapshot_number")
+  actionType        PublishActionType @map("action_type")
+  templateId        String            @map("template_id") @db.VarChar(80)
+  templateConfig    Json              @map("template_config")
+  snapshotData      Json              @map("snapshot_data")
+  comment           String?           @db.VarChar(255)
+  publishedByUserId String?           @map("published_by_user_id") @db.Uuid
+  sourceSnapshotId  String?           @map("source_snapshot_id") @db.Uuid
+  createdAt         DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  publishedByUser   User?             @relation("PublishSnapshotPublishedBy", fields: [publishedByUserId], references: [id])
+  sourceSnapshot    PublishSnapshot?  @relation("SnapshotSource", fields: [sourceSnapshotId], references: [id])
+  derivedSnapshots  PublishSnapshot[] @relation("SnapshotSource")
+  activeForThemes   SiteThemeState[]  @relation("CurrentPublishedSnapshot")
+
+  @@map("publish_snapshots")
+}
+
+model ActivityLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  action     String   @db.VarChar(50)
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String?  @map("entity_id") @db.VarChar(100)
+  summary    String   @db.VarChar(255)
+  detail     Json     @default("{}")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@map("activity_logs")
+}
