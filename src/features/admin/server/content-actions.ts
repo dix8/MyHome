@@ -242,19 +242,26 @@ export async function saveContentAction(
 
   const parsedProjects = projectIds.map((projectId) => ({
     id: projectId,
-    result: projectSchema.safeParse({
-      title: readFormValue(formData, `project-title-${projectId}`),
-      description: readFormValue(formData, `project-description-${projectId}`),
-      visualType: readFormValue(formData, `project-visualType-${projectId}`),
-      iconName: readFormValue(formData, `project-iconName-${projectId}`),
-      coverSourceType: readFormValue(formData, `project-coverSourceType-${projectId}`),
-      coverMediaAssetId: readFormValue(formData, `project-coverMediaAssetId-${projectId}`),
-      coverExternalUrl: readFormValue(formData, `project-coverExternalUrl-${projectId}`),
-      repoUrl: readFormValue(formData, `project-repoUrl-${projectId}`),
-      previewUrl: readFormValue(formData, `project-previewUrl-${projectId}`),
-      techStack: readFormValue(formData, `project-techStack-${projectId}`),
-      sortOrder: readFormValue(formData, `project-sortOrder-${projectId}`),
-    }),
+    result: (() => {
+      const visualType = readFormValue(formData, `project-visualType-${projectId}`) || "icon";
+
+      return projectSchema.safeParse({
+        title: readFormValue(formData, `project-title-${projectId}`),
+        description: readFormValue(formData, `project-description-${projectId}`),
+        visualType,
+        iconName: readFormValue(formData, `project-iconName-${projectId}`),
+        coverSourceType:
+          visualType === "cover"
+            ? readFormValue(formData, `project-coverSourceType-${projectId}`) || "none"
+            : "none",
+        coverMediaAssetId: readFormValue(formData, `project-coverMediaAssetId-${projectId}`),
+        coverExternalUrl: readFormValue(formData, `project-coverExternalUrl-${projectId}`),
+        repoUrl: readFormValue(formData, `project-repoUrl-${projectId}`),
+        previewUrl: readFormValue(formData, `project-previewUrl-${projectId}`),
+        techStack: readFormValue(formData, `project-techStack-${projectId}`),
+        sortOrder: readFormValue(formData, `project-sortOrder-${projectId}`),
+      });
+    })(),
   }));
 
   const firstProjectError = parsedProjects.find((entry) => !entry.result.success);
@@ -304,18 +311,25 @@ export async function saveContentAction(
 
   const parsedContacts = contactIds.map((contactId) => ({
     id: contactId,
-    result: contactSchema.safeParse({
-      type: readFormValue(formData, `contact-type-${contactId}`),
-      label: readFormValue(formData, `contact-label-${contactId}`),
-      value: readFormValue(formData, `contact-value-${contactId}`),
-      href: readFormValue(formData, `contact-href-${contactId}`),
-      iconType: readFormValue(formData, `contact-iconType-${contactId}`),
-      iconName: readFormValue(formData, `contact-iconName-${contactId}`),
-      iconSourceType: readFormValue(formData, `contact-iconSourceType-${contactId}`),
-      iconMediaAssetId: readFormValue(formData, `contact-iconMediaAssetId-${contactId}`),
-      iconExternalUrl: readFormValue(formData, `contact-iconExternalUrl-${contactId}`),
-      sortOrder: readFormValue(formData, `contact-sortOrder-${contactId}`),
-    }),
+    result: (() => {
+      const iconType = readFormValue(formData, `contact-iconType-${contactId}`) || "builtin";
+
+      return contactSchema.safeParse({
+        type: readFormValue(formData, `contact-type-${contactId}`),
+        label: readFormValue(formData, `contact-label-${contactId}`),
+        value: readFormValue(formData, `contact-value-${contactId}`),
+        href: readFormValue(formData, `contact-href-${contactId}`),
+        iconType,
+        iconName: readFormValue(formData, `contact-iconName-${contactId}`),
+        iconSourceType:
+          iconType === "image"
+            ? readFormValue(formData, `contact-iconSourceType-${contactId}`) || "none"
+            : "none",
+        iconMediaAssetId: readFormValue(formData, `contact-iconMediaAssetId-${contactId}`),
+        iconExternalUrl: readFormValue(formData, `contact-iconExternalUrl-${contactId}`),
+        sortOrder: readFormValue(formData, `contact-sortOrder-${contactId}`),
+      });
+    })(),
   }));
 
   const firstContactError = parsedContacts.find((entry) => !entry.result.success);
