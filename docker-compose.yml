@@ -1,6 +1,7 @@
 services:
   db:
-    image: postgres:16-alpine
+    container_name: postgresql
+    image: postgres:17-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-myhome}
@@ -14,21 +15,8 @@ services:
       timeout: 5s
       retries: 10
 
-  migrate:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file:
-      - .env.docker
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-change-this-password}@db:5432/${POSTGRES_DB:-myhome}
-    command: ["npm", "run", "prisma:migrate:deploy"]
-    restart: "no"
-
   app:
+    container_name: myhome
     build:
       context: .
       dockerfile: Dockerfile
@@ -36,8 +24,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
     env_file:
       - .env.docker
     environment:
