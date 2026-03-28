@@ -31,11 +31,12 @@ COPY --from=builder /app/next-env.d.ts ./next-env.d.ts
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/app ./app
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/.next ./.next
+
+RUN mkdir -p /app/public/uploads
 
 EXPOSE 3000
 
