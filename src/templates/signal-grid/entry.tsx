@@ -62,6 +62,7 @@ export default function TemplateEntry({ config, data }: TemplateRenderProps) {
 
   const footerText = data.site.footerText || `© ${new Date().getFullYear()} ${data.site.title}.`;
   const titleLine = data.hero.titles.filter((item) => item.trim().length > 0).slice(0, 3).join(" / ");
+  const identitySummary = data.hero.description?.trim() || data.site.subtitle?.trim() || "Personal profile.";
 
   return (
     <div className={`${styles.root} ${frameGlow ? styles.frameGlow : ""}`} style={rootStyle}>
@@ -70,7 +71,6 @@ export default function TemplateEntry({ config, data }: TemplateRenderProps) {
         {enabledSections.has("navigation") ? (
           <header className={styles.nav} data-signal-nav="true">
             <div className={styles.brand}>
-              <span className={styles.brandLabel}>Signal Grid</span>
               <strong className={styles.brandValue}>{data.site.title}</strong>
             </div>
             <nav className={styles.navLinks}>
@@ -122,8 +122,8 @@ export default function TemplateEntry({ config, data }: TemplateRenderProps) {
                   </div>
                 ) : null}
                 <div className={styles.panelBody}>
-                  <strong>{data.site.subtitle ?? "Personal operations console."}</strong>
-                  <p>以状态面板、网格骨架和系统感层次组织个人主页内容。</p>
+                  <strong>{data.site.subtitle ?? data.hero.titles[0] ?? "Personal profile."}</strong>
+                  <p>{identitySummary}</p>
                 </div>
               </article>
 
