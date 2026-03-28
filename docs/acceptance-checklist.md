@@ -9,7 +9,7 @@
 确认以下条件成立：
 
 1. PostgreSQL 服务可连接
-2. `.env` 中 `DATABASE_URL`、`NEXTAUTH_URL`、`AUTH_SECRET` 已填写
+2. `.env` 中 `DATABASE_URL`、`AUTH_SECRET` 已填写
 3. 已执行：
    `npm run prisma:generate`
 4. 已执行数据库迁移：

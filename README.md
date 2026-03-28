@@ -81,7 +81,6 @@ docs/
 
 ```env
 DATABASE_URL="postgresql://postgres:your-password@127.0.0.1:5432/myhome"
-NEXTAUTH_URL="http://localhost:3000"
 AUTH_SECRET="replace-with-a-long-random-string-at-least-32-characters"
 AUTO_BOOTSTRAP_ADMIN="true"
 DEFAULT_ADMIN_EMAIL="admin@example.com"
@@ -93,13 +92,11 @@ DEFAULT_ADMIN_PASSWORD="Admin123456!"
 
 1. `DATABASE_URL`
    指向本地或远程 PostgreSQL
-2. `NEXTAUTH_URL`
-   本地开发通常是 `http://localhost:3000`
-3. `AUTH_SECRET`
+2. `AUTH_SECRET`
    后台登录使用的密钥
-4. `AUTO_BOOTSTRAP_ADMIN`
+3. `AUTO_BOOTSTRAP_ADMIN`
    是否启用首次自动初始化管理员，默认可设为 `true`
-5. `DEFAULT_ADMIN_EMAIL` / `DEFAULT_ADMIN_NAME` / `DEFAULT_ADMIN_PASSWORD`
+4. `DEFAULT_ADMIN_EMAIL` / `DEFAULT_ADMIN_NAME` / `DEFAULT_ADMIN_PASSWORD`
    当数据库里还没有任何管理员用户时，系统会使用这组信息自动创建默认管理员
 
 ## 安装
@@ -208,17 +205,15 @@ cp .env.docker.example .env.docker
 至少修改：
 
 1. `POSTGRES_PASSWORD`
-2. `DATABASE_URL`
-3. `NEXTAUTH_URL`
-4. `AUTH_SECRET`
-5. `DEFAULT_ADMIN_EMAIL`
-6. `DEFAULT_ADMIN_NAME`
-7. `DEFAULT_ADMIN_PASSWORD`
+2. `AUTH_SECRET`
+3. `DEFAULT_ADMIN_EMAIL`
+4. `DEFAULT_ADMIN_NAME`
+5. `DEFAULT_ADMIN_PASSWORD`
 
 注意：
 
-1. `DATABASE_URL` 中数据库主机必须是 `db`
-2. `NEXTAUTH_URL` 必须写你的最终访问域名，例如 `https://example.com`
+1. `docker compose` 会自动根据 `POSTGRES_*` 变量拼出容器内部使用的 `DATABASE_URL`
+2. 默认数据库名是 `myhome`，默认用户是 `postgres`
 
 ### 2. 启动服务
 
