@@ -28,6 +28,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-change-this-password}@db:5432/${POSTGRES_DB:-myhome}
     ports:
       - "3000:3000"
+    command: >
+      sh -c "npm run prisma:migrate:deploy &&
+             npm run start:prod"
     volumes:
       - uploads_data:/app/public/uploads
 

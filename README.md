@@ -191,7 +191,8 @@ npm run dev
 
 1. `PostgreSQL` 容器
 2. `Next.js` 应用容器
-3. `public/uploads` 本地持久化卷
+3. 应用启动前自动执行 `prisma migrate deploy`
+4. `public/uploads` 本地持久化卷
 
 ### 1. 准备环境变量
 
@@ -224,17 +225,10 @@ docker compose --env-file .env.docker up -d --build
 
 1. 启动 PostgreSQL
 2. 构建 Next.js 应用镜像
-3. 启动应用容器
+3. 应用容器启动前自动执行 `prisma migrate deploy`
+4. 迁移成功后再启动应用
 
-### 3. 执行数据库迁移
-
-首次部署或 schema 更新后，执行：
-
-```bash
-docker compose --env-file .env.docker run --rm app npm run prisma:migrate:deploy
-```
-
-### 4. 首次初始化默认内容
+### 3. 首次初始化默认内容
 
 如果你想写入默认站点内容、模板状态和测试管理员，启动完成后执行：
 
@@ -247,7 +241,7 @@ docker compose --env-file .env.docker exec app npm run setup:initial
 1. 系统仍然可以启动
 2. 首次访问后台登录时，如果数据库里还没有管理员，系统会自动创建默认管理员
 
-### 5. 数据持久化
+### 4. 数据持久化
 
 Compose 已经内置两个卷：
 
@@ -261,7 +255,7 @@ Compose 已经内置两个卷：
 1. 重建容器后数据库不会丢
 2. 后台上传的图片不会丢
 
-### 6. 常用命令
+### 5. 常用命令
 
 查看应用日志：
 
@@ -279,12 +273,6 @@ docker compose --env-file .env.docker restart app
 
 ```bash
 docker compose --env-file .env.docker up -d --build
-```
-
-单独重跑数据库迁移：
-
-```bash
-docker compose --env-file .env.docker run --rm app npm run prisma:migrate:deploy
 ```
 
 停止服务：
