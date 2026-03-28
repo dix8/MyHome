@@ -10,6 +10,8 @@ RUN npm ci
 
 FROM base AS builder
 
+ENV AUTH_SECRET=docker-build-placeholder-secret
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
